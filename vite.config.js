@@ -11,11 +11,11 @@ export default defineConfig({
         //host配置，也就是跑起来的Network ip地址
         host:'localhost',
         //端口号
-        port: 2333,
-        //配置代理, 只有本地生效
+        port: 1000, //写入你自己的服务器配置
+        //配置代理, 只有本地生效, 这里后端已经解决跨域了，就不需要了
         // proxy:{
         //     '/api':{
-        //         target: "http://localhost:2334",
+        //         target: "http://localhost:xxxx", //写入你自己的服务器配置
         //         //代理websocket
         //         ws: true,
         //         //允许跨域
