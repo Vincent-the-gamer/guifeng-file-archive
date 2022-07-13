@@ -7,6 +7,11 @@ const cors = require('cors');
 const multer = require('multer');
 //文件处理库
 const fs = require('fs');
+//服务端创建，校验Token
+const {createToken, authJwt} = require('./tokenUtil')
+
+//解决跨域：使用cors中间件，在路由之前调用app.use(cors())
+app.use(cors())
 
 //配置请求体解析器
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -14,11 +19,29 @@ app.use(bodyParser.json());
 
 app.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin",  host+":2333");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
+    res.header("Access-Control-Allow-Headers", "content-type");
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    res.header("Cache-Control","no-store");//304
+    res.header("Cache-Control","no-store"); //304
     next();
 });
+
+//注册鉴权中间件
+app.use(authJwt)
+
+//注册鉴权错误捕获中间件
+app.use((err,req,res,next)=>{
+    if(err.name === 'UnauthorizedError'){
+        return res.send({
+            status: 401,
+            message:'无效token'
+        })
+    }
+    res.send({
+        status: 401,
+        message:'其他错误'
+    })
+})
+
 
 //生成指定长度的随机字符串
 function randomString(e) {
@@ -40,6 +63,7 @@ function GetRandomNum(Min,Max)
     return(Min + Math.round(Rand * Range));
 }
 
+
 //获得已经格式化的当前时间
 function getCurrentTime(){
     //toLocaleDateString():
@@ -47,9 +71,23 @@ function getCurrentTime(){
     //Windows 年/月/日 格式
     let date = new Date().toLocaleDateString();
     let dateArr = date.split("/");
+
+    //判断当前操作系统, 由于不同系统的new Date().toLocaleDateString();返回值不同
+    //我们需要专门适配：
+    //macOS: 月/日/年
+    //Windows: 年/月/日
+    let result = "";
+    switch (process.platform){
+        case "darwin": // Unix系统内核 (macOS等)
+            result = dateArr[2] + "-" + dateArr[0] + "-" + dateArr[1];
+            break;
+        case "win32": // Windows 系统内核
+            result = dateArr[0] + "-" + dateArr[1] + "-" + dateArr[2];
+            break;
+    }
     //按年月日格式返回
-    // return dateArr[2] + "-" + dateArr[0] + "-" + dateArr[1]; //调试时 macOS
-    return dateArr[0] + "-" + dateArr[1] + "-" + dateArr[2];  //部署时 Windows
+    // return
+    return result;  //部署时 Windows
 }
 
 //遍历读取文件夹的文件
@@ -125,13 +163,12 @@ let upload = multer({storage});
 app.post('/handleUpload', upload.array('files',10), (req,res) => {
     let files = req.files;
     let json;
-    if(files !== null){
+    if (files !== null) {
         json = {
             code: 200,
             message: "上传成功！"
         }
-    }
-    else {
+    } else {
         json = {
             code: 400,
             message: "上传失败！"
@@ -139,6 +176,26 @@ app.post('/handleUpload', upload.array('files',10), (req,res) => {
     }
     res.send(json);
 });
+
+//登录校验接口，我这里懒得用数据库，就直接写死了
+app.post("/login",(req,res,next) => {
+    const {username, password} = req.body;
+    if(username === "你的用户名" && password === "你的密码"){
+        res.send({
+            success: true,
+            message: "登录成功！",
+            token: createToken({username})
+        });
+    }
+    else{
+        res.send({
+            success: false,
+            message: "登录失败！"
+        })
+    }
+});
+
+
 
 //拿到图片的接口，把所有图片文件名数组返回给前端
 app.get('/getPics',(req,res) => {
@@ -167,18 +224,22 @@ app.post('/delPics',(req,res) => {
     });
 });
 
-//解决跨域：使用cors中间件，只能在接口定义完毕后配置
-//不然会有个大坑：请求卡住不响应
-app.use(cors())
+//检验token是否过期，这里啥也不用写，因为如果token过期会被前面的中间件拦截，自动返回401
+app.post('/isExpired',(req,res) => {
+    res.send({
+        status: 200,
+        message: 'token没过期'
+    })
+})
 
 //调试时
 // const host = "http://localhost";
 //部署时, 填入你的服务器和端口
-const host = "http://xxx."
-const port = 0;
+const host = "http://xxx"
+const port = 9999;
 //存放上传图片文件夹路径
 const target = path.resolve(__dirname + "/upload");
 
 app.listen(port,()=>{
-    console.log(`上传API运行于：${host}:${port}`)
+    console.log(`后端运行于：${host}:${port}`)
 })

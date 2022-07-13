@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
      <h4>
-       ©2022 诡锋开发 &nbsp;&nbsp;&nbsp;版本: v1.0.0 <br/>
+       ©2022 诡锋开发 &nbsp;&nbsp;&nbsp;版本: v{{version}} <br/>
        B站：<a href="https://space.bilibili.com/3342738" target="_blank">访问诡锋的B站</a><br/>
        Github：<a href=" https://github.com/Vincent-the-gamer" target="_blank">访问诡锋的Github</a>
      </h4>
@@ -17,8 +17,14 @@
  * Github: https://github.com/Vincent-the-gamer
  */
 //底部组件
+//引入配置文件，拿到版本号
+import config from '../../package.json'
 export default {
-  name: "Footer"
+  name: "Footer",
+  setup(){
+    const version = config.version;
+    return { version };
+  }
 }
 </script>
 

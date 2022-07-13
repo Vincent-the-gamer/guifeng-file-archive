@@ -3,7 +3,6 @@
 ## 使用 Vite + Vue 3 + Node.js开发 
 
 
-
 ## 关于作者
 
 作者：诡锋
@@ -18,12 +17,18 @@ https://space.bilibili.com/3342738
 
 所以这个网站就是用来部署到私人服务器上当图床的，功能只有上传图片和删除图片而已。
 
+* v1.0.1新特性：
+  - 增加登录鉴权功能，只有站长可以上传和删除图片
+  - 自适应日期格式
 
 
 ## 效果演示
 
-![](http://124.222.43.240:2334/upload/2022-7-7$38789pR5hi.png)
+### 未登录时：
+![](http://124.222.43.240:2334/upload/2022-7-13$17754DTENy.png)
 
+### 已登录时：
+![](http://124.222.43.240:2334/upload/2022-7-13$73077hHwaE.jpg)
 
 
 ## 如何使用这个项目
@@ -79,16 +84,20 @@ Windows: 年/月/日
 
 Linux没测过
 
-所以请在fileUpload.js中修改 getCurrentTime() 函数的返回值按照"/"分隔后的显示顺序
+v1.0.1新特性：这个格式已经针对macOS和Windows进行自适配，无需手动调整代码
 
-~~~js
- // return dateArr[2] + "-" + dateArr[0] + "-" + dateArr[1]; // macOS
-    return dateArr[0] + "-" + dateArr[1] + "-" + dateArr[2];  // Windows
-~~~
+### v1.0.1新增配置：
+**crypto.js**
+
+在里面填写你的加密规则即可，推荐使用ssh公钥私钥对，为后续生成token做准备
+
+**tokenUtil.js**
+
+用于生成和校验token，是鉴权的核心模块
 
 ### 打包部署
 
-把fileUpload.js单独拷贝出来，然后
+把fileUpload.js，cryto.js,tokenUtil.js单独拷贝出来，然后
 
 ~~~shell
 npm run build
@@ -120,7 +129,7 @@ app.listen(port, () => {
 })
 ~~~
 
-然后把fileUpload.js放入这个文件夹，方便启动
+然后把fileUpload.js，cryto.js, tokenUtil.js放入这个文件夹，方便启动
 
 **<font color="red">注意，在fileUpload.js同级目录下创建一个upload文件夹（文件夹名字看你的配置），用于存放上传的图片，不然后端会报错！</font>**
 

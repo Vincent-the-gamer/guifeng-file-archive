@@ -1,6 +1,6 @@
 <template>
    <!-- 图片上传： 允许多上传 -->
-    <div class="upload">
+    <div class="upload" v-if="token">
         <h2>上传图片</h2>
         <div class="file">
           <h4>点击这里上传图片</h4>
@@ -20,7 +20,7 @@
  * Github: https://github.com/Vincent-the-gamer
  */
 //图片上传组件
-import {getCurrentInstance} from "vue";
+import {getCurrentInstance, onMounted} from "vue";
 import axios from '@/global/axios';
 import {ref} from "vue";
 //引入全局事件总线
@@ -30,6 +30,7 @@ export default {
   name: "Pictures",
   setup(){
     let message = ref('');
+    let token = ref('');
     //拿到组件实例对象，使用$refs拿ref
     const _this = getCurrentInstance().proxy
     //上传图片功能
@@ -49,12 +50,17 @@ export default {
       if(fileList.length > 0 && fileList.length <= 10){ //后端规定最多传10个
         axios.post("/handleUpload",formData).then(
             response => {
-               message.value = "上传成功！";
-               //触发自定义事件
-               bus.emit('refresh');
+              if(response.data.status === 401){
+                message.value = "您没有登录！请先登录再上传!";
+              }
+              else{
+                message.value = "上传成功！";
+                //触发自定义事件
+                bus.emit('refresh');
+              }
             },
             error => {
-              message.value = "上传失败！";
+              message.value = "上传出错了！";
             }
         )
         setTimeout(() => {
@@ -65,7 +71,11 @@ export default {
         alert("上传的文件个数不符合要求！")
       }
     }
-    return { message, handleUpload }
+
+    onMounted(() => {
+      token.value = localStorage.getItem('token');
+    })
+    return { message, handleUpload,token }
   }
 }
 </script>
@@ -85,6 +95,7 @@ export default {
        border-style: solid;
        border-radius: 4px;
        background-color: purple;
+       box-shadow: 0 8px 16px 0 rgba(255,255,255,0.4);
        color: white;
        height: @uploadHeight;
        width: @uploadWidth;
@@ -95,6 +106,7 @@ export default {
        }
        &:hover{
          background-color: gold;
+         color: black;
        }
      }
      input{

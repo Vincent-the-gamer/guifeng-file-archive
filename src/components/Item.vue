@@ -5,10 +5,12 @@
       <a :href=" `${location}/${fullName}`" target="_blank">
        <img :src=" `${location}/${fullName}` " alt="图片">
       </a>
-       <button class="delete"
-               v-show="delControl.showDel"
-               @click.stop="delPic"
-       >删除图片</button>
+       <div>
+         <button class="delete"
+                 v-if="delControl.showDel && delControl.token"
+                 @click.stop="delPic"
+         >删除图片</button>
+       </div>
      </div>
      <div class="title">
        <h3>{{name}}</h3>
@@ -24,7 +26,7 @@
  * Github: https://github.com/Vincent-the-gamer
  */
 //显示单个图片的组件
-import {reactive} from "vue";
+import {onMounted, reactive} from "vue";
 import axios from "@/global/axios";
 //引入全局事件总线
 import bus from '@/global/mitt';
@@ -34,9 +36,11 @@ export default {
   props:["fullName","name","date","location"],
   setup(props){
     //控制删除按钮是否显示
-     const delControl = reactive({
-        showDel: false
-     })
+    let delControl = reactive({showDel: false});
+    onMounted(() => {
+      delControl.token = localStorage.getItem('token');
+    })
+
     //删除文件方法
     function delPic(){
        if(confirm('确定要删除该图片吗？')){
@@ -44,10 +48,15 @@ export default {
          axios.post("/delPics",
              { fileName: props.fullName } ).then(
              response => {
-               bus.emit('refresh')
+               if(response.data.status === 401){
+                 alert("您没有登录！删除失败！");
+               }
+               else{
+                 bus.emit('refresh');
+               }
              },
              error => {
-               alert(error.message);
+               alert("删除失败！");
              }
          )
        }
