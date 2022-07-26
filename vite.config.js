@@ -11,7 +11,7 @@ export default defineConfig({
         //host配置，也就是跑起来的Network ip地址
         host:'localhost',
         //端口号
-        port: 9000, //写入你自己的服务器配置
+        port: 9090, //写入你自己的服务器配置
     },
     //打包配置
     build:{

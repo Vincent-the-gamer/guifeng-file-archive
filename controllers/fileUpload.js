@@ -85,9 +85,7 @@ function getCurrentTime(){
             result = dateArr[0] + "-" + dateArr[1] + "-" + dateArr[2];
             break;
     }
-    //按年月日格式返回
-    // return
-    return result;  //部署时 Windows
+    return result;
 }
 
 //遍历读取文件夹的文件
@@ -180,7 +178,7 @@ app.post('/handleUpload', upload.array('files',10), (req,res) => {
 //登录校验接口，我这里懒得用数据库，就直接写死了
 app.post("/login",(req,res,next) => {
     const {username, password} = req.body;
-    if(username === "你的用户名" && password === "你的密码"){
+    if(username === "guifeng" && password === "yiyiali"){
         res.send({
             success: true,
             message: "登录成功！",
@@ -235,8 +233,8 @@ app.post('/isExpired',(req,res) => {
 //调试时
 // const host = "http://localhost";
 //部署时, 填入你的服务器和端口
-const host = "http://xxx"
-const port = 9999;
+const host = "xx"
+const port = 9876;
 //存放上传图片文件夹路径
 const target = path.resolve(__dirname + "/upload");
 

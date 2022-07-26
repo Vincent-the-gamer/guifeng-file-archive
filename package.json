@@ -1,6 +1,6 @@
 {
   "name": "guifeng-pic-bed",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "scripts": {
     "serve": "vite",
     "build": "vite build"
