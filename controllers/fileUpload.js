@@ -230,13 +230,24 @@ app.post('/isExpired',(req,res) => {
     })
 })
 
+
+let host = "";
 //调试时
-// const host = "http://localhost";
-//部署时, 填入你的服务器和端口
-const host = "xx"
-const port = 9876;
+if(process.env.NODE_ENV.trim() === 'development'){
+    host = "http://localhost";
+}
+else if(process.env.NODE_ENV.trim() === 'production'){
+    //部署时
+    host = "http://124.222.43.240";
+}
+else{
+    console.log("所处环境既不是开发环境也不是生产环境，配置出错，值为：" + process.env.NODE_ENV);
+    host = "error";
+}
+const port = 2334;
 //存放上传图片文件夹路径
 const target = path.resolve(__dirname + "/upload");
+
 
 app.listen(port,()=>{
     console.log(`后端运行于：${host}:${port}`)

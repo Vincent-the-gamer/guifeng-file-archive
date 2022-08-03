@@ -2,7 +2,7 @@
    <div class="showContainer">
      <h1 v-if="hasNoPic">图片列表为空！</h1>
    <!--  一定要注意，item是完整的文件名，传路径的时候文件名是这个   -->
-      <Item v-for="(item,index) in picsArray"
+      <Item v-for="(item,index) in pictures.pics"
             :key="index"
             :fullName="item"
             :name="getFileInfo(item).name"
@@ -14,7 +14,7 @@
 
 <script>
 //图片展示组件
-import {onMounted, onBeforeUnmount, ref, reactive,toRaw} from "vue";
+import {onMounted, onBeforeMount, onBeforeUnmount, ref, reactive,toRaw} from "vue";
 import Item from "./Item";
 import axios from '@/global/axios';
 //引入全局事件总线
@@ -25,11 +25,11 @@ export default {
   components: {Item},
   setup() {
     //显示图片功能
-    let srcs = reactive({});
+    const srcs = reactive({});
     let location = ref('');
     let hasNoPic = ref(true);
-    let picsArray = ref([]);
-
+    let picsArray = [];
+    const pictures = reactive({});
 
     //生命周期：挂载后
     onMounted(() => {
@@ -52,10 +52,11 @@ export default {
         response => {
            srcs.pics = response.data.data.files;
            location.value = response.data.data.location;
-           picsArray.value = toRaw(srcs.pics);
-           if(picsArray.value.length !== 0){
+           picsArray= toRaw(srcs.pics);
+           if(picsArray.length !== 0){
              hasNoPic.value = false;
-             picsArray.value = sort(toRaw(picsArray.value));
+             picsArray = sort(picsArray);
+             pictures.pics = picsArray;
            }
         }
     )
@@ -79,47 +80,56 @@ export default {
       return {year,month,day}
     }
 
-    //把图片按照日期从新到旧排序显示
-    function sort(picArray){
-      let picArr = [];
-      for(let i=0;i<picArray.length;i++){
-        picArr[i] = picArray[i];
+    //比较日期大小,具体过程看代码就行
+    function compareDate(date1,date2){
+      let formatDate1 = new Date(date1);
+      let formatDate2 = new Date(date2);
+      if(formatDate1 > formatDate2){
+        return 1;
       }
-      //快排一下日期,注意，上面函数返回的对象是{year,month,day}，记得按照对象取值
-      quickSort(picArr,0,picArr.length - 1,"year");
-      quickSort(picArr,0,picArr.length - 1,"month");
-      quickSort(picArr,0,picArr.length - 1,"day");
-
-      return picArr;
+      else if(formatDate1 === formatDate2){
+        return 0;
+      }
+      else{
+        return -1;
+      }
     }
 
-    //对日期快速排序,递减顺序,type表示对年，月还是日排序
-    function quickSort(arr,begin,end,type){
+    //把图片按照日期从新到旧排序显示
+    function sort(picArray){
+      //快排一下日期,注意，上面函数返回的对象是{year,month,day}，记得按照对象的key来填写type
+      quickSort(picArray,0,picArray.length - 1);
+      return picArray;
+    }
+
+    //对日期快速排序,递减顺序
+    function quickSort(arr,begin,end){
       if(begin < end){
-        debugger;
         let i = begin;
         let j = end;
         let pivot = arr[begin];
-        let pivotDate = parseInt(getDate(arr[begin])[`${type}`]);
+        let pivotDate = `${parseInt(getDate(arr[begin])["year"])}-${parseInt(getDate(arr[begin])["month"])}-${parseInt(getDate(arr[begin])["day"])}`;
         while(i < j){
-          while(parseInt(getDate(arr[j])[`${type}`]) <= pivotDate && i < j){
+          while(compareDate(`${parseInt(getDate(arr[j])["year"])}-${parseInt(getDate(arr[j])["month"])}-${parseInt(getDate(arr[j])["day"])}`,pivotDate) <= 0 && i < j){
             j--;
           }
           arr[i] = arr[j];
-          while(parseInt(getDate(arr[i])[`${type}`]) >= pivotDate && i < j){
+          while(compareDate(`${parseInt(getDate(arr[i])["year"])}-${parseInt(getDate(arr[i])["month"])}-${parseInt(getDate(arr[i])["day"])}`,pivotDate) > 0 && i < j){
             i++;
           }
           arr[j] = arr[i];
         }
         arr[i] = pivot;
-        quickSort(arr,begin,i-1,type);
-        quickSort(arr,i+1,end,type);
+        quickSort(arr,begin,i-1);
+        quickSort(arr,i+1,end);
       }else{
         return;
       }
     }
 
-    return { picsArray,location,getFileInfo,hasNoPic }
+
+
+    return { pictures,location,getFileInfo,hasNoPic }
 
   }
 }

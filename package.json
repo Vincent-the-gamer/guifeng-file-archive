@@ -1,9 +1,15 @@
 {
   "name": "guifeng-pic-bed",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "scripts": {
-    "serve": "vite",
-    "build": "vite build"
+    "serve": "vite && set NODE_ENV=development",
+    "build": "vite build && set NODE_ENV=production",
+    "backend-wincmd-dev": "set NODE_ENV=development && node ./controllers/fileUpload.js",
+    "backend-wincmd-prod": "set NODE_ENV=production && node ./controllers/fileUpload.js",
+    "backend-powershell-dev": "$env:NODE_ENV=development && node ./controllers/fileUpload.js",
+    "backend-powershell-prod": "$env:NODE_ENV=production && node ./controllers/fileUpload.js",
+    "backend-mac-dev": "export NODE_ENV=development && node ./controllers/fileUpload.js",
+    "backend-mac-prod": "export NODE_ENV=production && node ./controllers/fileUpload.js"
   },
   "dependencies": {
     "@types/node": "^18.0.1",

@@ -22,8 +22,30 @@ https://space.bilibili.com/3342738
 
 [查看开发日志](./版本信息(Version%20Info).md)
 
-**目前版本：v1.0.2**
+**目前版本：v1.0.3**
 
+v1.0.3以后的启动方式有所改变
+
+部署时，在服务器上项目中的package.json的scripts里面增加这两条命令
+~~~json
+# Windows
+{
+  "start-backend": "set NODE_ENV=production && node fileUpload.js",
+  "start-frontend": "set NODE_ENV=production && node app.js"
+}
+# macOS/Linux
+{
+"start-backend": "export NODE_ENV=production && node fileUpload.js",
+"start-frontend": "export NODE_ENV=production && node app.js"
+}
+~~~
+
+~~~shell
+# 启动前端
+npm run start-frontend
+# 启动后端
+npm run start-backend
+~~~
 ## 效果演示
 
 ### 未登录时：
