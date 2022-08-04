@@ -66,27 +66,18 @@ git clone https://github.com/Vincent-the-gamer/CustomizedPicBed.git
 ~~~
 
 ### 调试项目
+如何启动项目：
 
-前端使用
+请查看开发日志，里面有针对不同操作系统下的启动命令配置，直接用npm run xxx就行
 
-~~~shell
-npm run serve
-~~~
+[查看开发日志](./版本信息(Version%20Info).md)
 
-后端使用
-
-~~~shell
-node fileUpload.js
-~~~
 
 ### 按需求配置
 
 进入controllers/fileUpload.js，配置好您自己服务器的ip和端口（这就是后端）
 
 ~~~js
-//调试时
-// const host = "http://localhost";
-//部署时, 填入你的服务器和端口
 const host = "http://xxx.xxx"
 const port = 0;
 ~~~
@@ -130,14 +121,17 @@ npm run build
 会生成一个dist文件夹, 然后单独创建一个文件夹，
 
 把dist整个扔进去，然后在这个文件夹下安装依赖
-
+先初始化npm
 ~~~shell
 # 初始化npm环境
 npm init 
+~~~
+这里记住把package.json里面需要的依赖配置好，然后
+~~~shell
 npm install
 ~~~
 
-如果没有安装上，就单独把js中用到的所有依赖一个个安装了吧（笑）
+也可以手动单独安装依赖
 
 下一步：创建app.js
 
@@ -160,8 +154,10 @@ app.listen(port, () => {
 然后在这一级目录下启动两个命令行终端（开启两个服务)，分别输入以下命令
 
 ~~~shell
-node fileUpload.js
-node app.js
+# 启动前端
+npm run start-frontend
+# 启动后端
+npm run start-backend
 ~~~
 
 然后就可以根据你的端口访问前端了

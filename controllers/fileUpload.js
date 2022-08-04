@@ -178,7 +178,7 @@ app.post('/handleUpload', upload.array('files',10), (req,res) => {
 //登录校验接口，我这里懒得用数据库，就直接写死了
 app.post("/login",(req,res,next) => {
     const {username, password} = req.body;
-    if(username === "guifeng" && password === "yiyiali"){
+    if(username === "xx" && password === "xx"){
         res.send({
             success: true,
             message: "登录成功！",
