@@ -7,6 +7,12 @@ const cors = require('cors');
 const multer = require('multer');
 //文件处理库
 const fs = require('fs');
+
+//引入axios
+const axios = require('axios');
+//引入cheerio,解析html标签
+const cheerio = require('cheerio');
+
 //服务端创建，校验Token
 const {createToken, authJwt} = require('./tokenUtil')
 
@@ -178,7 +184,7 @@ app.post('/handleUpload', upload.array('files',10), (req,res) => {
 //登录校验接口，我这里懒得用数据库，就直接写死了
 app.post("/login",(req,res,next) => {
     const {username, password} = req.body;
-    if(username === "xx" && password === "xx"){
+    if(username === "kk" && password === "bbsd"){
         res.send({
             success: true,
             message: "登录成功！",
@@ -221,6 +227,32 @@ app.post('/delPics',(req,res) => {
         message: "删除成功！"
     });
 });
+
+//tool.lu工具箱：中文拆字  爬取接口
+app.get('/chaizi',(req,res) => {
+    axios.get('https://tool.lu/zhcomponent/index.html',{
+        params:{
+            q: req.query.q
+        },
+        headers:{
+            "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+        }
+    }).then(
+        response => {
+            let $ = cheerio.load(response.data);
+            let result = `<table>
+              ${ $('table[class=tbl]').html()} 
+              </table>`
+            res.send(result);
+        },
+        error => {
+            console.log(error.message);
+            res.send(error.message);
+        }
+    )
+})
+
+
 
 //检验token是否过期，这里啥也不用写，因为如果token过期会被前面的中间件拦截，自动返回401
 app.post('/isExpired',(req,res) => {

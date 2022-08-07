@@ -4,10 +4,22 @@
     <h1>诡锋的个人图库</h1>
     <h4>点击图片就可以打开图片，获得链接</h4>
     <h4>图片每次最多可以选10张</h4>
+    <div align="center">
+      <router-link to="/pictures">
+        <button class="routeNav">
+          <h4>查看图片</h4>
+        </button>
+      </router-link>
+      <router-link to="/tools">
+        <button class="routeNav">
+          <h4>tool.lu小工具</h4>
+        </button>
+      </router-link>
+    </div>
   </div>
   <hr/>
-  <PictureUploader/>
-  <PictureShow/>
+  <!-- 路由组件显示在这 -->
+  <router-view></router-view>
   <Footer/>
 </template>
 
@@ -17,17 +29,17 @@
  * B站：https://space.bilibili.com/3342738
  * Github: https://github.com/Vincent-the-gamer
  */
-import PictureUploader from "./components/PictureUploader";
-import PictureShow from "./components/PictureShow";
+
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import {onMounted} from "vue";
 import axios from "./global/axios";
 import bus from './global/mitt';
 
+
 export default {
   name: 'App',
-  components: {Header, Footer, PictureShow, PictureUploader},
+  components: {Header, Footer},
   setup(){
     //检验token是否过期
     onMounted(() =>{
@@ -66,5 +78,35 @@ export default {
   }
   .headTitle{
      margin-top: 80px;
+  }
+  .routeNav{
+    margin-right: 8px;
+    border-width: 1px;
+    border-color: red;
+    border-style: solid;
+    border-radius: 4px;
+    background-color: purple;
+    box-shadow: 0 8px 16px 0 rgba(255,255,255,0.4);
+    color: white;
+    height: 40px;
+    width: 150px;
+    font-size: 15px;
+    h4{
+      text-align: center;
+      transform: translateY(-13px);
+      font-family: xiawu;
+    }
+    &:hover{
+      background-color: gold;
+      color: black;
+    }
+  }
+
+  //给router-link用的自定义active-class
+  .activeClass{
+    button{
+      background-color: chartreuse;
+      color: black;
+    }
   }
 </style>
