@@ -242,7 +242,7 @@ app.post('/fileUpload', uploadFile.array('zips',5), (req,res) => {
 //登录校验接口，我这里懒得用数据库，就直接写死了
 app.post("/login",(req,res,next) => {
     const {username, password} = req.body;
-    if(username === "guifeng" && password === "lavafall"){
+    if(username === "sdd" && password === "az"){
         res.send({
             success: true,
             message: "登录成功！",
@@ -361,7 +361,7 @@ else{
     console.log("所处环境既不是开发环境也不是生产环境，配置出错，值为：" + process.env.NODE_ENV);
     host = "error";
 }
-const port = 2334;
+const port = 7654;
 //存放上传图片文件夹路径
 const target = path.resolve(__dirname + "/upload");
 const fileTarget = path.resolve(__dirname + "/filesUpload")
