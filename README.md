@@ -1,4 +1,4 @@
-# 诡锋搭建的私人图床软件
+# 诡锋搭建的个人文件库
 
 ## 使用 Vite + Vue 3 + Node.js开发 
 
@@ -13,16 +13,15 @@ https://space.bilibili.com/3342738
 
 ## 功能
 
-
-我做这个网站的契机是Github的CDN: jsdelivr 显示不出github上传的图片了，也就是说我的图床寄了。
-
-所以这个网站就是用来部署到私人服务器上当图床的，功能只有上传图片和删除图片而已。
+本项目现已经变成文件库，目前支持图片上传查看下载，以及压缩包的上传下载
 
 各版本变动请查看开发日志：
 
 [查看开发日志](./版本信息(Version%20Info).md)
 
-**目前版本：v1.0.4**
+**目前版本：v1.0.5**
+
+v1.0.5增加了zip压缩包的上传和下载功能
 
 测试功能：v1.0.4使用爬虫技术来直接白嫖了https://tool.lu的中文拆字功能，结论是可行。
 之后打算全部缝合进来233
@@ -33,12 +32,12 @@ v1.0.3以后的启动方式有所改变
 ~~~json
 # Windows
 {
-  "start-backend": "set NODE_ENV=production && node fileUpload.js",
+  "start-backend": "set NODE_ENV=production && node Backend.js",
   "start-frontend": "set NODE_ENV=production && node app.js"
 }
 # macOS/Linux
 {
-"start-backend": "export NODE_ENV=production && node fileUpload.js",
+"start-backend": "export NODE_ENV=production && node Backend.js",
 "start-frontend": "export NODE_ENV=production && node app.js"
 }
 ~~~
@@ -78,7 +77,7 @@ git clone https://github.com/Vincent-the-gamer/CustomizedPicBed.git
 
 ### 按需求配置
 
-进入controllers/fileUpload.js，配置好您自己服务器的ip和端口（这就是后端）
+进入controllers/backend.js，配置好您自己服务器的ip和端口（这就是后端）
 
 ~~~js
 const host = "http://xxx.xxx"

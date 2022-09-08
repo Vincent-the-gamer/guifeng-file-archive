@@ -1,9 +1,10 @@
 <template>
   <Header/>
   <div class="headTitle">
-    <h1>诡锋的个人图库</h1>
-    <h4>点击图片就可以打开图片，获得链接</h4>
+    <h1>诡锋的个人文件库</h1>
+    <h4>图片：点击图片就可以打开图片，获得链接</h4>
     <h4>图片每次最多可以选10张</h4>
+    <h4>文件上传下载仅站长可用，需要登录，目前只支持zip格式</h4>
     <div align="center">
       <router-link to="/pictures">
         <button class="routeNav">
@@ -13,6 +14,11 @@
       <router-link to="/tools">
         <button class="routeNav">
           <h4>tool.lu小工具</h4>
+        </button>
+      </router-link>
+      <router-link to="/files">
+        <button class="routeNav">
+          <h4>压缩包文件管理</h4>
         </button>
       </router-link>
     </div>

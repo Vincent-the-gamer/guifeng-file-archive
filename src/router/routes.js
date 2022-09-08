@@ -1,5 +1,6 @@
 import PictureManager from "../pages/PictureManager";
 import Tools from "../pages/Tools";
+import FileManager from "../pages/FileManager";
 
 //配置路由
 const routes = [
@@ -14,6 +15,10 @@ const routes = [
     {
         path: '/tools',
         component: Tools
+    },
+    {
+        path: '/files',
+        component: FileManager
     }
 ];
 

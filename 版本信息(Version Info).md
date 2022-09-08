@@ -1,5 +1,8 @@
 # 开发日志
 
+* v1.0.5:
+  * 增加zip压缩包上传与下载，仅站长登录可用
+
 * v1.0.4:
   * 测试嵌入中文拆字的整活功能，之后会陆陆续续把tool.lu所有工具都缝合进来
 
@@ -8,12 +11,12 @@
   PS: 以下配置用于以开发或生产环境启动，自动适配host。
   ~~~json
   {
-    "backend-wincmd-dev": "set NODE_ENV=development && node ./controllers/fileUpload.js",
-    "backend-wincmd-prod": "set NODE_ENV=production && node ./controllers/fileUpload.js",
-    "backend-powershell-dev": "$env:NODE_ENV=development && node ./controllers/fileUpload.js",
-    "backend-powershell-prod": "$env:NODE_ENV=production && node ./controllers/fileUpload.js",
-    "backend-mac-dev": "export NODE_ENV=development && node ./controllers/fileUpload.js",
-    "backend-mac-prod": "export NODE_ENV=production && node ./controllers/fileUpload.js"
+    "backend-wincmd-dev": "set NODE_ENV=development && node ./controllers/Backend.js",
+    "backend-wincmd-prod": "set NODE_ENV=production && node ./controllers/Backend.js",
+    "backend-powershell-dev": "$env:NODE_ENV=development && node ./controllers/Backend.js",
+    "backend-powershell-prod": "$env:NODE_ENV=production && node ./controllers/Backend.js",
+    "backend-mac-dev": "export NODE_ENV=development && node ./controllers/backend.js",
+    "backend-mac-prod": "export NODE_ENV=production && node ./controllers/Backend.js"
    }
    ~~~
   * 重写快速排序，解决月份排序不对的Bug，我之前傻了

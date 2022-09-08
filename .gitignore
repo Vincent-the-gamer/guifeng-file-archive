@@ -6,3 +6,4 @@ dist-ssr
 controllers/upload
 .idea
 .idea/*
+controllers/filesUpload

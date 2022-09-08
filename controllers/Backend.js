@@ -1,3 +1,4 @@
+// 后端
 const express = require("express");
 const app = express();
 const bodyParser = require('body-parser')
@@ -7,6 +8,8 @@ const cors = require('cors');
 const multer = require('multer');
 //文件处理库
 const fs = require('fs');
+//把json对象转为urlencoded格式
+const qs = require('qs');
 
 //引入axios
 const axios = require('axios');
@@ -96,6 +99,7 @@ function getCurrentTime(){
 
 //遍历读取文件夹的文件
 function readFiles(path){
+    path = decodeURI(path);
     let filesList = [];
     //需要同步读取
     let files = fs.readdirSync(path);
@@ -112,10 +116,15 @@ function readFiles(path){
     return filesList;
 }
 
-//删除图片的方法
-function deletePic(path){
+//删除文件的方法
+function deleteFile(path){
     //判断是文件还是文件夹
+    path = decodeURI(path);
     fs.stat(path, (err,stateObj) => {
+            if(err){
+                console.log(err);
+                return
+            }
             //如果是文件
             if(stateObj.isFile()){
                 //只能用于删除文件
@@ -159,11 +168,30 @@ let storage = multer.diskStorage({
     }
 });
 
+// 使用硬盘存储模式设置存放接收到的文件的路径以及文件名
+let storageFile = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // 接收到文件后输出的保存路径（若不存在则需要创建）
+        cb(null, fileTarget);
+    },
+    filename: function (req, file, cb) {
+        // 将保存文件名设置为 时间戳转为的当前日期 + 随机数字 + 后缀
+        // 注意后缀是file.originalname.substring(file.originalname.lastIndexOf("."),file.originalname.length)
+        // 一定要取出原来的后缀
+        console.log(file.originalname)
+        cb(null, file.originalname);
+    }
+});
+
+
 //创建 multer 对象
 let upload = multer({storage});
 
+let uploadFile = multer({storageFile});
+
+
 //所有接口必须在跨域前面配置
-//上传图片接口，每次最多上传10张
+//上传图片接口，每次最多上传10张图片
 app.post('/handleUpload', upload.array('files',10), (req,res) => {
     let files = req.files;
     let json;
@@ -181,10 +209,40 @@ app.post('/handleUpload', upload.array('files',10), (req,res) => {
     res.send(json);
 });
 
+//上传文件，每次最多上传5个
+app.post('/fileUpload', uploadFile.array('zips',5), (req,res) => {
+    let files = req.files;
+    if (files !== null) {
+        let count = 0
+        files.map(file => {
+            let fileName = file.originalname
+            fs.writeFile(fileTarget + "/" + `${fileName}` ,file.buffer,err => {
+                if(err){
+                    console.log(err)
+                }
+                else{
+                    count++;
+                }
+            })
+        })
+        res.send({
+            code: 200,
+            message: "上传成功！"
+        })
+    }
+    else{
+        res.send({
+            code: 400,
+            message: "上传失败！"
+        })
+    }
+
+});
+
 //登录校验接口，我这里懒得用数据库，就直接写死了
 app.post("/login",(req,res,next) => {
     const {username, password} = req.body;
-    if(username === "kk" && password === "bbsd"){
+    if(username === "guifeng" && password === "lavafall"){
         res.send({
             success: true,
             message: "登录成功！",
@@ -213,15 +271,44 @@ app.get('/getPics',(req,res) => {
         }
     })
 })
+//拿到文件的接口，把所有图片文件名数组返回给前端
+app.get('/getFiles',(req,res) => {
+    //返回文件名数组给前端
+    let fileList = readFiles(fileTarget);
+    res.send({
+        code: 200,
+        data: {
+            files: fileList,
+            location: host + ":" + port + "/filesUpload"
+        }
+    })
+})
+
+
 //显示图片的接口
 app.get('/upload/*',(req,res) => {
     res.sendFile(__dirname + "/" + req.url);
 })
+//下载文件的接口
+app.post('/filesUpload/*',(req, res) => {
+    res.sendFile(__dirname + "/" + req.url)
+})
+
 
 //删除图片的接口
 app.post('/delPics',(req,res) => {
     let name = req.body.fileName;
-    deletePic(target + "/" + name);
+    deleteFile(target + "/" + name);
+    res.send({
+        code: 200,
+        message: "删除成功！"
+    });
+});
+
+//删除文件的接口
+app.post('/delFiles',(req,res) => {
+    let name = req.body.fileName;
+    deleteFile(fileTarget + "/" + name);
     res.send({
         code: 200,
         message: "删除成功！"
@@ -246,12 +333,10 @@ app.get('/chaizi',(req,res) => {
             res.send(result);
         },
         error => {
-            console.log(error.message);
             res.send(error.message);
         }
     )
 })
-
 
 
 //检验token是否过期，这里啥也不用写，因为如果token过期会被前面的中间件拦截，自动返回401
@@ -279,6 +364,7 @@ else{
 const port = 2334;
 //存放上传图片文件夹路径
 const target = path.resolve(__dirname + "/upload");
+const fileTarget = path.resolve(__dirname + "/filesUpload")
 
 
 app.listen(port,()=>{

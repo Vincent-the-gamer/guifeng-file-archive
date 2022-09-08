@@ -20,7 +20,7 @@ const authJwt = expressJwt({
     algorithms:['HS256'],
     credentialsRequired: true, //false:不鉴权
 }).unless({
-    path: ['/login',/upload\/(.*?)/,'/getPics','/chaizi']
+    path: ['/login',/upload\/(.*?)/,'/getPics','/chaizi','/head']
 });
 
 

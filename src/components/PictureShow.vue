@@ -14,7 +14,7 @@
 
 <script>
 //图片展示组件
-import {onMounted, onBeforeMount, onBeforeUnmount, ref, reactive,toRaw} from "vue";
+import {onMounted, onBeforeUnmount, ref, reactive,toRaw} from "vue";
 import Item from "./Item";
 import axios from '@/global/axios';
 //引入全局事件总线
